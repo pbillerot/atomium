@@ -1,0 +1,22 @@
+{
+  "name": "atomium",
+  "version": "0.1.0",
+  "main": "bootstrapper.js",
+  "license": "MIT",
+  "repository": "pbillerot/atomium",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-register": "^6.3.13",
+    "material-ui": "^0.16.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-tap-event-plugin": "^1.0.0"
+  },
+  "devDependencies": {
+    "electron": "^1.4.3"
+  }
+}
