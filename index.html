@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>atome</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap-theme.min.css">
-    <script>
+
+<head>
+	<title>atome</title>
+	<link rel="stylesheet" href="photon/css/photon.min.css" />
+	<!-- Electron Javascript -->
+	<script>
       // install babel hooks in the renderer process
       require('babel-register');
       require('./app.js');
-    </script>
-  </head>
+    </script>head>
 
-  <body>
-    <div id="app"></div>
-  </body>
+<body>
+	<!-- Wrap your entire app inside .window -->
+	<div id="app" class="window">
+	</div>
+</body>
+
 </html>
