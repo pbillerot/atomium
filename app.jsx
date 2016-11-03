@@ -1,160 +1,128 @@
-'use babel';
-
-import React from 'react';
+const React = require('react')
 const dico = require('./dico')
 const data = require('./data')
 const fs = require('fs')
 
 export default class Main extends React.Component {
   render() {
-      var myStyle = {
-         fontSize: 100,
-         color: '#FF0000'
-      }
-
-      return (
-        <div className="window">
-          <Header />
-          <TodoApp />
-          <Footer />
-        </div>
-      );
+    return (
+      <div className="window">
+        <Header />
+        <Content />
+        <Footer />
+      </div>
+    );
   }
 }
 
 class Header extends React.Component {
-   render() {
-      return (
-         <header className="toolbar toolbar-header">
-            <h1 className="title">{dico.application.name}</h1>
-         </header>
-      );
-   }
+  render() {
+    return (
+      <header className="toolbar toolbar-header">
+        <h1 className="title">{dico.application.name}</h1>
+      </header>
+    );
+  }
 }
 
 class Footer extends React.Component {
-   render() {
-      return (
-         <footer className="toolbar toolbar-footer">
-            <div className="title">
-            <a href={dico.application.url} target="_blank">Github</a>
-            </div>
-         </footer>
-      );
-   }
-}
-const myStyle = {
-    width: '100%',
-    height: '100%'
-}
-
-class Content extends React.Component {
-   constructor(props) {
-      super(props);
-		
-      this.state = {
-         value: 'Initial data...'
-      }
-
-      this.updateState = this.updateState.bind(this);
-      this.handleTextArea = this.handleTextArea(this)
-   }
-
-   updateState(event) {
-     console.log(event.target.value)
-      this.setState({value: event.target.value});
-   }
-
-   handleTextArea(event) {
-     console.log(event)
-   }
-
-  select(p) {
-    console.log(p.item)
-    this.updateState(p.item)
-  }
-  
   render() {
-      return (
-        <div className="window-content">
-          <div className="pane-group">
-            <div className="pane-sm sidebar">
-              <nav className="nav-group">
-                <h5 className="nav-group-title">Fichiers</h5>
-                {data.files.map(item =>
-                  <span key = {item} className="nav-group-item" onClick={this.updateState} data-value={item}>                    
-                    {item}
-                  </span> 
-                )}
-              </nav>
-                
-            </div>
-            <div className="pane">
-              <textarea style={{width: '100%', height: '95%'}} value={this.state.value} onChange={this.handleTextArea}/>
-            </div>
-          </div>
+    return (
+      <footer className="toolbar toolbar-footer">
+        <div className="title">
+          <a href={dico.application.url} target="_blank">Github</a>
         </div>
-      );
+      </footer>
+    );
   }
 }
 
-class ListItems extends React.Component {
-   render() {
-     console.log(this.props.data.item)
-      return (
-         <div>
-            <p>{this.props.data.item}</p>
-         </div>
-      );
-   }
-}
-
-class TodoApp extends React.Component {
+/**
+ * Alimentation de la partie centrale
+ */
+class Content extends React.Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {items: [], text: ''};
+    this.state = {
+      items: data.files, // liste des fichiers à afficher dans le sidebar
+      path: '', // fichier courant sélectionné
+      data: ''
+    }
+    this.handleSelect = this.handleSelect.bind(this);
   }
+
+  /**
+   * Sélection d'un fichier dans le sidebard
+   */
+  handleSelect(event) {
+    console.log(`handleSelect: {event.target.value}`)
+    this.setState({ path: event.target.value, data: this.readFile(event.target.value) });
+  }
+
+  /**
+   * Lecture du fichierœ
+   */
+  readFile(path) {
+    console.log(`readFile: {path}`)
+    let data = fs.readFileSync(path)
+    return data
+  }
+
 
   render() {
     return (
-      <div>
-        <h3>TODO</h3>
-        <TodoList items={this.state.items} />
-        <form onSubmit={this.handleSubmit}>
-          <input onChange={this.handleChange} value={this.state.text} />
-          <button>{'Add #' + (this.state.items.length + 1)}</button>
-        </form>
+      <div className="window-content">
+        <div className="pane-group">
+          <div className="pane-sm sidebar">
+            <Sidebar itemsProps={this.state.items} handleSelectProps={this.handleSelect} />
+          </div>
+          <div className="pane">
+            <Editor dataProps={this.state.data} />
+          </div>
+        </div>
       </div>
     );
   }
+}
 
-  handleChange(e) {
-    this.setState({text: e.target.value});
-  }
+class Sidebar extends React.Component {
+  render() {
+    return (
+      <nav className="nav-group">
+        <h5 className="nav-group-title">Fichiers</h5>
+        {this.props.itemsProps.map(item =>
+          <span key={item} className="nav-group-item">
+            <button onClick={this.props.handleSelectProps} value={item}>{item}</button>
+          </span>
+        )}
+      </nav>
 
-  handleSubmit(e) {
-    e.preventDefault();
-    var newItem = {
-      text: this.state.text,
-      id: Date.now()
-    };
-    this.setState((prevState) => ({
-      items: prevState.items.concat(newItem),
-      text: ''
-    }));
+    );
   }
 }
 
-class TodoList extends React.Component {
+class Editor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleRecord = this.handleRecord.bind(this);
+  }
+
+  /**
+   * Demande d'enregistrement
+   */
+  handleRecord(event) {
+    console.log(event.target.value)
+  }
+
+  // on ne traite pas le changement de contenu du textarea
+  handleChange(event) {
+    // ras
+  }
+
   render() {
     return (
-      <ul>
-        {this.props.items.map(item => (
-          <li key={item.id}>{item.text}</li>
-        ))}
-      </ul>
+      <textarea style={{ width: '100%', height: '98%' }}
+        value={this.props.dataProps} onChange={this.handleChange} />
     );
   }
 }

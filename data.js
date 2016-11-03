@@ -1,6 +1,6 @@
 module.exports = {
     files : [
-        '/etc/host',
+        '/etc/hosts',
         '/etc/crontab'
     ]
 }
