@@ -2,6 +2,7 @@ const React = require('react')
 const dico = require('./dico')
 const data = require('./data')
 const fs = require('fs')
+const jsonfile = require('jsonfile')
 
 export default class Main extends React.Component {
   render() {
@@ -46,28 +47,33 @@ class Content extends React.Component {
     this.state = {
       items: data.files, // liste des fichiers à afficher dans le sidebar
       path: '', // fichier courant sélectionné
-      data: ''
+      data: ''  // contenu du textarea
     }
     this.handleSelect = this.handleSelect.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   /**
    * Sélection d'un fichier dans le sidebard
    */
   handleSelect(event) {
-    console.log(`handleSelect: {event.target.value}`)
     this.setState({ path: event.target.value, data: this.readFile(event.target.value) });
+  }
+
+  /**
+   * Le textarea a été modifié
+   */
+  handleChange(event) {
+    this.setState({ data: event.target.value });
   }
 
   /**
    * Lecture du fichierœ
    */
   readFile(path) {
-    console.log(`readFile: {path}`)
     let data = fs.readFileSync(path)
     return data
   }
-
 
   render() {
     return (
@@ -77,7 +83,7 @@ class Content extends React.Component {
             <Sidebar itemsProps={this.state.items} handleSelectProps={this.handleSelect} />
           </div>
           <div className="pane">
-            <Editor dataProps={this.state.data} />
+            <Editor dataProps={this.state.data} pathProps={this.state.path} handleChangeProps={this.handleChange}/>
           </div>
         </div>
       </div>
@@ -92,11 +98,10 @@ class Sidebar extends React.Component {
         <h5 className="nav-group-title">Fichiers</h5>
         {this.props.itemsProps.map(item =>
           <span key={item} className="nav-group-item">
-            <button onClick={this.props.handleSelectProps} value={item}>{item}</button>
+            <button className="btn btn-default" onClick={this.props.handleSelectProps} value={item}>{item}</button>
           </span>
         )}
       </nav>
-
     );
   }
 }
@@ -111,18 +116,28 @@ class Editor extends React.Component {
    * Demande d'enregistrement
    */
   handleRecord(event) {
-    console.log(event.target.value)
-  }
-
-  // on ne traite pas le changement de contenu du textarea
-  handleChange(event) {
-    // ras
+    fs.writeFile(this.props.pathProps, this.props.dataProps, (err) => {
+      if (err) throw err;
+      console.log(this.props.pathProps + ' a été enregistré');
+    });
   }
 
   render() {
-    return (
-      <textarea style={{ width: '100%', height: '98%' }}
-        value={this.props.dataProps} onChange={this.handleChange} />
-    );
+    const isAvecFile = this.props.pathProps.length > 0 ? true : false
+    if (isAvecFile) {
+      return (
+        <div style={{ width: '100%', height: '100%' }}>
+          <header className="toolbar toolbar-header">
+            <div style={{ margin: 5 }} className="pull-left">{this.props.pathProps}</div>
+            <button style={{ margin: 5 }} className="btn btn-default pull-right" onClick={this.handleRecord} >
+              Enregistrer</button>
+          </header>
+          <textarea style={{ width: '100%', height: '93%' }}
+            value={this.props.dataProps} onChange={this.props.handleChangeProps} />
+        </div>
+      )
+    } else {
+      return null
+    }
   }
 }

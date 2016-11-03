@@ -9,6 +9,6 @@ Framework de développement d'application pour bureau (desktop)
 [React](https://facebook.github.io/react/)
 [Photon](http://photonkit.com/)
 
-> Application pour qualifier les mise en oeuvre des technologies liées à [NodeJS]
+> Application experimental pour qualifier la mise en oeuvre des technologies liées à [NodeJS]
 
 P.BILLEROT
