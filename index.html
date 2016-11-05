@@ -2,8 +2,27 @@
 <html>
 
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Introducing Lollipop, a sweet new take on Android.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 	<title>atome</title>
-	<link rel="stylesheet" href="photon/css/photon.css" />
+
+	<link rel="stylesheet" href="./mdl/material.min.css">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px;
+      margin-bottom: 40px;
+      z-index: 900;
+    }
+    </style>
+
 	<!-- Electron Javascript -->
 	<script>
       // install babel hooks in the renderer process
@@ -14,6 +33,7 @@
 
 <body>
 	<div id="app"></div>
+	<script defer src="./mdl/material.min.js"></script>
 </body>
 
 </html>
