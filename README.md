@@ -3,12 +3,12 @@
 Framework de développement d'application pour bureau (desktop) 
 à base de 
 [NodeJS](https://nodejs.org/en/)
-[ES6](https://developer.mozilla.org/fr/docs/Web/JavaScript)
 [Electron](http://electron.atom.io/)
 [Babel](http://babeljs.io)
+[ES6](https://developer.mozilla.org/fr/docs/Web/JavaScript)
 [React](https://facebook.github.io/react/)
-[Photon](http://photonkit.com/)
+[React-mdl](https://react-mdl.github.io/react-mdl/)
 
-> Application experimental pour qualifier la mise en oeuvre des technologies liées à [NodeJS]
+> Application experimentale pour qualifier la mise en oeuvre des technologies liées à [NodeJS]
 
 P.BILLEROT
