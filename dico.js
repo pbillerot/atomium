@@ -1,6 +1,6 @@
 module.exports = {
     application: {
-        name: 'Gestionnaire de configuration',
+        name: 'Atomium',
         desc: 'Editeur des fichiers système',
         url: 'https://github.com/pbillerot/atomium',
         menuTitle: 'Fichiers'
