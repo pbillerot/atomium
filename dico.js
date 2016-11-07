@@ -1,8 +1,9 @@
 module.exports = {
     application: {
-        name: 'Atomium',
+        name: 'GESTIONNAIRE DE CONFIGURATION',
         desc: 'Editeur des fichiers système',
         url: 'https://github.com/pbillerot/atomium',
+        copyright: 'ATOMIUM 2016 - version 0.1.0',
         menuTitle: 'Fichiers'
     },
 

@@ -1,8 +1,10 @@
 import React from 'react'
 const ReactMDL = require('react-mdl')
 import {
-  Button, Card, CardActions, CardMenu, CardText, CardTitle, Content, Drawer, Footer, Header, Layout, List, ListItem,
-  Navigation, Radio, RadioGroup, Textfield
+  Button, Card, CardActions, CardMenu, CardText, CardTitle, Chip, ChipContact, Content,
+  Dialog, DialogActions, DialogContent, DialogTitle, Drawer,
+  Footer, FooterLinkList, FooterSection, Header, Icon, IconButton, Layout, List, ListItem,
+  Menu, MenuItem, Navigation, Radio, RadioGroup, Textfield
 } from 'react-mdl'
 
 const dico = require('./dico')
@@ -16,12 +18,18 @@ export default class Main extends React.Component {
     this.state = {
       items: data.files, // liste des fichiers à afficher dans le sidebar
       path: '', // fichier courant sélectionné
+      pathNew: '', // demande ouverture d'un nouveau fichier
       data: '',  // contenu du textarea
-      buttonDisabled: true 
+      buttonDisabled: true,
+      openDialogConfirm: false      
     }
     this.handleSelect = this.handleSelect.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRecord = this.handleRecord.bind(this);
+
+    this.handleOpenDialogConfirm = this.handleOpenDialogConfirm.bind(this);
+    this.handleCloseDialogConfirm = this.handleCloseDialogConfirm.bind(this);
+    this.handleValidDialogConfirm = this.handleValidDialogConfirm.bind(this);
   }
 
   /**
@@ -29,7 +37,13 @@ export default class Main extends React.Component {
    */
   handleSelect(item) {
     console.log('Select: ' + item)
-    this.setState({ path: item, data: this.readFile(item) });
+    if ( ! this.state.buttonDisabled ) { 
+      // le fichier courant a été modifié
+      this.handleOpenDialogConfirm()
+      this.setState({ pathNew: item });
+    } else {
+      this.setState({ path: item, data: this.readFile(item) });
+    }
   }
 
   /**
@@ -37,8 +51,7 @@ export default class Main extends React.Component {
    */
   handleChange(event) {
     this.setState({ data: event.target.value });
-    this.setState({buttonDisabled: false})
-    //document.querySelector('#button_id').removeAttribute('disabled')
+    this.setState({ buttonDisabled: false })
   }
 
   /**
@@ -46,6 +59,7 @@ export default class Main extends React.Component {
    */
   readFile(path) {
     let data = fs.readFileSync(path)
+    this.setState({ buttonDisabled: true })
     return data
   }
 
@@ -57,27 +71,89 @@ export default class Main extends React.Component {
     fs.writeFile(this.state.path, this.state.data, (err) => {
       if (err) throw err;
       console.log(this.state.path + ' a été enregistré');
-      this.setState({buttonDisabled: true})
-      //document.querySelector('#button_id').setAttribute('disabled', 'disabled')
+      this.setState({ buttonDisabled: true })
     });
+  }
+
+  /**
+   * Dialog demande confirmation abandon modification
+   */
+  handleOpenDialogConfirm() {
+    this.setState({openDialogConfirm: true});
+  }
+  handleCloseDialogConfirm() {
+    this.setState({openDialogConfirm: false});
+  }
+  handleValidDialogConfirm(item) {
+    this.setState({openDialogConfirm: false});
+    // l'abandon des modifs a été confirmé
+    // on peut l'écraser avec le nouveau fichier
+    this.setState({ path: this.state.pathNew, data: this.readFile(this.state.pathNew) });
   }
 
   render() {
     return (
       <div >
         <Layout fixedHeader fixedDrawer>
-          <Header title={dico.application.name} />
+          <HeaderPage handleOpenDialogConfirm={this.handleOpenDialogConfirm}/>
           <Sidebar items={this.state.items} handleSelect={this.handleSelect} />
           <Content>
             <Editor data={this.state.data}
               path={this.state.path}
               buttonDisabled={this.state.buttonDisabled}
               handleChange={this.handleChange}
-              handleRecord={this.handleRecord} />
+              handleRecord={this.handleRecord}
+            />
           </Content>
-          <Footer size="mini" />
+          <FooterPage />
+          <DialogConform openDialogConfirm={this.state.openDialogConfirm}
+            handleCloseDialogConfirm={this.handleCloseDialogConfirm}
+            handleValidDialogConfirm={this.handleValidDialogConfirm}
+          />
         </Layout>
       </div>
+    )
+  }
+}
+
+class HeaderPage extends React.Component {
+  github(event) {
+    window.open(dico.application.url
+      , 'github'
+      , 'toolbar=0,status=0,width=1024,height=800');
+  }
+  render() {
+    return (
+      <Header title={dico.application.name}>
+        <Navigation>
+          <IconButton name="more_vert" id="menu-id" />
+          <Menu target="menu-id" align="right">
+            <MenuItem>Action</MenuItem>
+            <MenuItem>Another Action</MenuItem>
+            <MenuItem disabled>Disabled Action</MenuItem>
+            <MenuItem>Yet Another Action</MenuItem>
+          </Menu>
+        </Navigation>
+      </Header>
+    )
+  }
+}
+
+class FooterPage extends React.Component {
+  github(event) {
+    window.open(dico.application.url
+      , 'github'
+      , 'toolbar=0,status=0,width=1024,height=800');
+  }
+  render() {
+    return (
+      <Footer size="mini">
+        <FooterSection type="bottom">
+          <FooterLinkList>
+            <a href="javascript: ;" onClick={this.github}>Github</a>
+          </FooterLinkList>
+        </FooterSection>
+      </Footer>
     )
   }
 }
@@ -85,10 +161,10 @@ export default class Main extends React.Component {
 class Sidebar extends React.Component {
   handleClick(item, event) {
     event.preventDefault()
-    this.props.handleSelect(item, event)
     // on ferme le Drawer
     var d = document.querySelector('.mdl-layout');
     d.MaterialLayout.toggleDrawer();
+    this.props.handleSelect(item, event)
   }
   render() {
     return (
@@ -116,7 +192,7 @@ class Editor extends React.Component {
               onChange={this.props.handleChange} />
           </CardText>
           <CardMenu style={{ color: '#fff' }}>
-            <Button id="button_id" raised colored disabled={this.props.buttonDisabled} 
+            <Button id="button_id" raised colored disabled={this.props.buttonDisabled}
               onClick={this.props.handleRecord}>Enregistrer</Button>
           </CardMenu>
         </Card>
@@ -127,3 +203,19 @@ class Editor extends React.Component {
   }
 }
 
+class DialogConform extends React.Component {
+  render() {
+      return (
+        <Dialog open={this.props.openDialogConfirm} onCancel={this.props.handleCloseDialogConfirm}>
+          <DialogTitle>Demande confirmation</DialogTitle>
+          <DialogContent>
+            <p>Confirmez-vous l'abandon des modifications effectuées sur le fichier ?</p>
+          </DialogContent>
+          <DialogActions>
+            <Button type='button' onClick={this.props.handleCloseDialogConfirm}>Annuler</Button>
+            <Button type='button' onClick={this.props.handleValidDialogConfirm}>Je confirme l'abandon</Button>
+          </DialogActions>
+        </Dialog>
+      )
+  }
+}
