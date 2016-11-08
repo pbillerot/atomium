@@ -11,6 +11,7 @@ const dico = require('./dico')
 const data = require('./data')
 const fs = require('fs')
 const jsonfile = require('jsonfile')
+const db = require('./db')
 
 export default class Main extends React.Component {
   constructor(props) {
@@ -23,6 +24,8 @@ export default class Main extends React.Component {
       buttonDisabled: true,
       openDialogConfirm: false      
     }
+    this.handleActionMenu = this.handleActionMenu.bind(this);
+
     this.handleSelect = this.handleSelect.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleRecord = this.handleRecord.bind(this);
@@ -31,6 +34,16 @@ export default class Main extends React.Component {
     this.handleCloseDialogConfirm = this.handleCloseDialogConfirm.bind(this);
     this.handleValidDialogConfirm = this.handleValidDialogConfirm.bind(this);
   }
+
+  /**
+   * Sélection d'un fichier dans le sidebard
+   */
+  handleActionMenu(arg) {
+    console.log('action: ' + arg)
+    let sql = new db.TestSql()
+    sql.read()
+  }
+  
 
   /**
    * Sélection d'un fichier dans le sidebard
@@ -95,7 +108,7 @@ export default class Main extends React.Component {
     return (
       <div >
         <Layout fixedHeader fixedDrawer>
-          <HeaderPage handleOpenDialogConfirm={this.handleOpenDialogConfirm}/>
+          <HeaderPage handleActionMenu={this.handleActionMenu}/>
           <Sidebar items={this.state.items} handleSelect={this.handleSelect} />
           <Content>
             <Editor data={this.state.data}
@@ -128,7 +141,7 @@ class HeaderPage extends React.Component {
         <Navigation>
           <IconButton name="more_vert" id="menu-id" />
           <Menu target="menu-id" align="right">
-            <MenuItem>Action</MenuItem>
+            <MenuItem onClick={this.props.handleActionMenu}>Action</MenuItem>
             <MenuItem>Another Action</MenuItem>
             <MenuItem disabled>Disabled Action</MenuItem>
             <MenuItem>Yet Another Action</MenuItem>
