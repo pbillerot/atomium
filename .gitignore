@@ -42,3 +42,5 @@ jspm_packages
 # Visual Studio 2015
 .vscode
 
+# react-builder
+dist

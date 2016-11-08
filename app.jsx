@@ -193,7 +193,7 @@ class Editor extends React.Component {
           </CardText>
           <CardMenu style={{ color: '#fff' }}>
             <Button id="button_id" raised colored disabled={this.props.buttonDisabled}
-              onClick={this.props.handleRecord}>Enregistrer</Button>
+              onClick={this.props.handleRecord}><Icon name="backup"/> Enregistrer</Button>
           </CardMenu>
         </Card>
       )

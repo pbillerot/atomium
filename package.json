@@ -1,11 +1,26 @@
 {
   "name": "atomium",
+  "productName": "atomium",
+  "description": "Framework de développement",
+  "author": "pbillerot",
+  "email": "philippe.billerot@gmail.com",
+  "homepage": "https://github.com/pbillerot/atomium",
   "version": "0.1.0",
   "main": "bootstrapper.js",
   "license": "MIT",
   "repository": "pbillerot/atomium",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "build --dir",
+    "dist": "build",
+    "pack-linux": "build --linux deb"
+  },
+  "build": {
+    "appId": "atomium",
+    "linux": {
+      "target": "deb",
+      "maintainer": "pbillerot"
+    }
   },
   "dependencies": {
     "babel-preset-es2015": "^6.3.13",
@@ -17,6 +32,7 @@
     "react-mdl": "^1.7.2"
   },
   "devDependencies": {
-    "electron": "^1.4.3"
+    "electron": "^1.4.3",
+    "electron-builder": "^7.24.1"
   }
 }
