@@ -1,105 +1,126 @@
+/**
+ * Déclaration du dictionnaire des rubriques, formulaires et vues de l'application
+ * id: toujours en majuscule
+ */
 module.exports = {
     application: {
-        name: 'GESTIONNAIRE DE CONFIGURATION',
-        desc: 'Editeur des fichiers système',
+        title: 'ATOMIUM',
+        desc: 'CRUD with Dictionary',
         url: 'https://github.com/pbillerot/atomium',
         copyright: 'ATOMIUM 2016 - version 0.1.0',
-        menuTitle: 'Fichiers'
     },
-
-    rubriques: [
-        {
-            id_rubrique: 'pseudo',
-            is_key: true,
-            label_long: 'Pseudo',
-            label_short: 'Pseudo',
-            type: 'text', // type HTML5
-            len: 30,
-            min: null,
-            max: null,
-            defaut: '',
-            placeholder: 'pseudo',
-            pattern: null,
-            help: 'Indiquer le pseudo',
-            list: null, //val1,val2
-            options: ''
-        },
-        {
-            id_rubrique: 'email',
-            is_key: true,
-            label_long: 'Email',
-            label_short: 'Email',
-            type: 'email', // type HTML5
-            len: 70,
-            min: null,
-            max: null,
-            defaut: '',
-            placeholder: 'nom@fournisseur.ext',
-            pattern: null,
-            help: 'Indiquer le nom',
-            list: null, //val1,val2
-            options: ''
-        }
-    ],
-    formulaires: [
-        {
-            id_formulaire: 'form_1',
-            label: 'Compte',
-            options: null,
-            script: null,
-            securite: null,
-            help: 'help.md',
-            champs: [
-                {
-                    id_rubrique: 'nom',
-                    is_maj: true,
-                    is_protege: false,
-                    is_hidden: false,
-                    is_meme_ligne: false
+    tables: {
+        USERS: {
+            basename: '/home/billerot/conf/acteur/tex.sqlite',
+            rubs: {
+                IDUSER: {
+                    is_key: true,
+                    label_long: 'COMPTE',
+                    label_short: 'COMPTE',
+                    type: 'text', // type HTML5
+                    len: 30,
+                    min: null,
+                    max: null,
+                    defaut: '',
+                    placeholder: 'compte id',
+                    pattern: null,
+                    tooltip: null,
+                    list: null, //val1,val2
+                    options: ''
                 },
-                {
-                    id_rubrique: 'pseudo',
-                    is_maj: true,
-                    is_protege: false,
-                    is_hidden: false,
-                    is_meme_ligne: false
-                }
-            ]
-        }
-    ],
-    vues: [
-        {
-            id_vue: 'vue_1',
-            label: 'Compte',
-            form_ajout: 'form_1',
-            form_maj: 'form_1',
-            form_view: 'form_1',
-            form_suppr: null,
-            options: null,
-            select: null,
-            securite: null,
-            help: 'help.md',
-            colonnes: [
-                {
-                    id_rubrique: 'nom',
-                    tri: 'A',
-                    is_hidden: false,
-                    is_rupture: false,
-                    is_cumul: false,
-                    is_filtre: true,
-                    filtre: null
+                NOMUSER: {
+                    is_key: false,
+                    label_long: 'NOM ou PSEUDO',
+                    label_short: 'NOM',
+                    type: 'text', // type HTML5
+                    len: 70,
+                    min: null,
+                    max: null,
+                    defaut: '',
+                    placeholder: 'nom ou psudo',
+                    pattern: null,
+                    tooltip: 'Nom ou le pseudo du compte',
+                    list: null, //val1,val2
+                    options: ''
                 },
-                {
-                    id_rubrique: 'pseudo',
-                    tri: null,
-                    is_hidden: false,
-                    is_rupture: false,
-                    is_cumul: false,
-                    is_filtre: true,
-                    filtre: null
+                EMAIL: {
+                    is_key: false,
+                    label_long: 'EMAIL',
+                    label_short: 'EMAIL',
+                    type: 'email', // type HTML5
+                    len: 70,
+                    min: null,
+                    max: null,
+                    defaut: '',
+                    placeholder: 'email@info.net',
+                    pattern: null,
+                    tooltip: 'Email du compte',
+                    list: null, //val1,val2
+                    options: ''
                 }
-            ]
-        }
-    ]
 
+            },
+            views: {
+                VUE_1: {
+                    id: 'VUE_1',
+                    title: 'LISTE DES COMPTES',
+                    form_ajout: 'FORM_1',
+                    form_maj: 'FORM_1',
+                    form_view: 'FORM_1',
+                    form_suppr: null,
+                    options: null,
+                    select: null,
+                    securite: null,
+                    help: 'help.md',
+                    cols: {
+                        IDUSER: {
+                            tri: null,
+                            is_hidden: false,
+                            is_rupture: false,
+                            is_cumul: false,
+                            is_filtre: true,
+                            filtre: null
+                        },
+                        NOMUSER: {
+                            tri: 'A',
+                            is_hidden: false,
+                            is_rupture: false,
+                            is_cumul: false,
+                            is_filtre: true,
+                            filtre: null
+                        },
+                        EMAIL: {
+                            tri: null,
+                            is_hidden: false,
+                            is_rupture: false,
+                            is_cumul: false,
+                            is_filtre: true,
+                            filtre: null
+                        }
+                    }
+                },
+                VUE_2: {
+                    title: 'LISTE DES UTILISATEURS',
+                    form_ajout: 'FORM_1',
+                    form_maj: 'FORM_1',
+                    form_view: 'FORM_1',
+                    form_suppr: null,
+                    options: null,
+                    select: null,
+                    securite: null,
+                    help: 'help.md',
+                    cols: {
+                        NOMUSER: {
+                            tri: 'A',
+                            is_hidden: false,
+                            is_rupture: false,
+                            is_cumul: false,
+                            is_filtre: true,
+                            filtre: null
+                        }
+                    }
+                }
+            }
+        }
+    }
 } // end exports
