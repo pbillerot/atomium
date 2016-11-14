@@ -1,12 +1,11 @@
 const React = require('react')
-const ReactMDL = require('react-mdl')
-const ReactMarkdown = require('react-markdown')
+const ReactMarkdown = require('react-markdown-it')
 const sqlite3 = require('sqlite3').verbose();
 
 import {
-    Button, Card, CardActions, CardMenu, CardText, CardTitle, Chip, ChipContact, Content,
+    Button, Card, CardActions, CardMenu, CardText, CardTitle, Cell, Chip, ChipContact, Content,
     Dialog, DialogActions, DialogContent, DialogTitle, Drawer,
-    Footer, FooterLinkList, FooterSection, Header, Icon, IconButton, Layout, List, ListItem,
+    Footer, FooterLinkList, FooterSection, Grid, Header, Icon, IconButton, Layout, List, ListItem,
     Menu, MenuItem, Navigation, Radio, RadioGroup, Textfield, Table, TableHeader
 } from 'react-mdl'
 
@@ -15,26 +14,26 @@ const data = require('./data')
 const sqlite = require('./sqlite')
 const fs = require('fs')
 
-var ContentType = {
-    EDITOR: 'EDITOR',
+var PageLayout = {
+    HOME: 'HOME',
     VIEW: 'VIEW',
+    FORM: 'FORM',
     HELP: 'HELP'
 };
-
 export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // Titre de la fenêtre
-            title: Dico.application.title,
+            // Layout
+            layout: 'HOME', // HOME ou FORM
+            title: Dico.application.title, // Titre de la fenêtre
             // Dialog
-            apropos: false,
-            // Type de contenu à afficher dans le container principal
-            content: null, // ContentType
+            about: false,
             // DICTIONNAIRE
             table: 'USERS',
             view: 'VUE_1',
             form: 'FORM_1',
+            key: null,
             rows: [],
             // Tableur
             rowsSelected: [],
@@ -47,7 +46,7 @@ export default class Main extends React.Component {
     * Juste pour déclencher une actualisation de données du contexte
     */
     handleState(state) {
-        console.log(JSON.stringify(state, null, 4))
+        //console.log(JSON.stringify(state, null, 4))
         this.setState(state)
     }
 
@@ -75,33 +74,45 @@ export default class Main extends React.Component {
                 db.close()
             });
         }
-        getAll((rows) => this.handleState({ content: ContentType.VIEW, rows: rows }))
+        getAll((rows) => this.setState({ layout: PageLayout.VIEW, rows: rows }))
     }
 
     render() {
-        return (
-            <div >
-                <Layout fixedHeader fixedDrawer>
-                    <HeaderPage ctx={this} />
-                    <Sidebar ctx={this} />
-                    <Content>
-                        <ContentPage ctx={this} />
-                    </Content>
-                    <FooterPage ctx={this} />
-                    <APropos ctx={this} />
-                </Layout>
-            </div>
-        )
-    }
-}
-
-class ContentPage extends React.Component {
-    render() {
-        switch (this.props.ctx.state.content) {
-            case ContentType.VIEW:
-                return <Tableur ctx={this.props.ctx} />
-            case ContentType.HELP:
-                return <Help ctx={this.props.ctx} />
+        switch (this.state.layout) {
+            case PageLayout.HOME:
+                return (
+                    <Layout fixedHeader fixedDrawer>
+                        <HeaderPage ctx={this} />
+                        <Sidebar ctx={this} />
+                        <Content>
+                            <Portail ctx={this} />
+                        </Content>
+                        <FooterPage ctx={this} />
+                        <APropos ctx={this} />
+                    </Layout>
+                )
+            case PageLayout.VIEW:
+                return (
+                    <Layout fixedHeader fixedDrawer>
+                        <HeaderPage ctx={this} />
+                        <Sidebar ctx={this} />
+                        <Content>
+                            <Tableur ctx={this} />
+                        </Content>
+                        <APropos ctx={this} />
+                    </Layout>
+                )
+            case PageLayout.HELP:
+                return (
+                    <Layout fixedHeader fixedDrawer>
+                        <HeaderPage ctx={this} />
+                        <Sidebar ctx={this} />
+                        <Content>
+                            <Help ctx={this} />
+                        </Content>
+                        <APropos ctx={this} />
+                    </Layout>
+                )
             default:
                 return null
         }
@@ -110,21 +121,21 @@ class ContentPage extends React.Component {
 
 class HeaderPage extends React.Component {
     render() {
-      if (this.props.ctx.state.rowsSelected.length > 0) {
-        return (
-            <Header title={this.props.ctx.state.title}>
-                <Navigation>
-                    <IconButton name="edit" id="action_edit" />
-                    <IconButton name="delete" id="action_delete" />
-                </Navigation>
-            </Header>
-        )
-      } else {
-        return (
-            <Header title={this.props.ctx.state.title}>
-            </Header>
-        )
-      }
+        if (this.props.ctx.state.rowsSelected.length > 0) {
+            return (
+                <Header title={this.props.ctx.state.title}>
+                    <Navigation>
+                        <IconButton name="edit" id="action_edit" />
+                        <IconButton name="delete" id="action_delete" />
+                    </Navigation>
+                </Header>
+            )
+        } else {
+            return (
+                <Header title={this.props.ctx.state.title}>
+                </Header>
+            )
+        }
     }
 }
 
@@ -148,6 +159,27 @@ class FooterPage extends React.Component {
     }
 }
 
+class Portail extends React.Component {
+    render() {
+        return (
+            <Card shadow={0} style={{ width: '512px', margin: 'auto', marginTop: 20 }}>
+                <CardTitle style={{ color: '#fff', height: '176px', background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover' }}>
+                Bienvenue dans ATOMIUM</CardTitle>
+                <CardText>
+                    Le framework pour développer des applications en décrivant 
+                    les rubriques, les formulaires, les vues dans un dictionnaire
+                </CardText>
+                <CardActions border>
+                    <Button colored>Pour commencer</Button>
+                </CardActions>
+                <CardMenu style={{ color: '#fff' }}>
+                    <IconButton name="share" />
+                </CardMenu>
+            </Card>
+        )
+    }
+}
+
 class Sidebar extends React.Component {
     handleClick(item, event) {
         event.preventDefault()
@@ -167,27 +199,32 @@ class Sidebar extends React.Component {
     handleAPropos(e) {
         e.preventDefault
         this.closeDrawer()
-        this.props.ctx.handleState({ apropos: true })
+        this.props.ctx.handleState({ about: true })
+    }
+    handleAccueil(e) {
+        e.preventDefault
+        this.closeDrawer()
+        this.props.ctx.setState({ title: 'Aide', layout: PageLayout.HOME })
     }
     handleHelp(e) {
         e.preventDefault
         this.closeDrawer()
-        this.props.ctx.setState({ title: 'Aide', content: ContentType.HELP })
+        this.props.ctx.setState({ title: 'Aide', layout: PageLayout.HELP })
     }
     render() {
         var viewSelected = this.props.ctx.state.view
         return (
             <Drawer title={Dico.application.title}>
                 <Navigation>
+                    <a onClick={(e) => this.handleAccueil(e)}><Icon name="home" /> Accueil</a>
                     {Object.keys(Dico.tables[this.props.ctx.state.table].views).map(key =>
-                        <a onClick={(event) => this.handleClickView(key, event)} key={key}
-                        selected={viewSelected == key ? 'is_active': ''} active>
+                        <a onClick={(event) => this.handleClickView(key, event)} key={key}>
+                            <Icon name="view_list" />
                             {Dico.tables[this.props.ctx.state.table].views[key].title}
                         </a>
                     )}
-                    <hr />
-                    <a onClick={(e) => this.handleHelp(e)}>Aide</a>
-                    <a onClick={(e) => this.handleAPropos(e)}>A propos</a>
+                    <a onClick={(e) => this.handleHelp(e)}><Icon name="help" /> Aide</a>
+                    <a onClick={(e) => this.handleAPropos(e)}><Icon name="info" /> A propos</a>
                 </Navigation>
             </Drawer>
         );
@@ -210,14 +247,14 @@ class Help extends React.Component {
 class APropos extends React.Component {
     render() {
         return (
-            <Dialog open={this.props.ctx.state.apropos} onCancel={(data) => this.props.ctx.setState({ apropos: false })}>
+            <Dialog open={this.props.ctx.state.about} onCancel={(data) => this.props.ctx.setState({ about: false })}>
                 <DialogTitle>{Dico.application.title}</DialogTitle>
                 <DialogContent>
                     <p>{Dico.application.desc}</p>
                     <p>{Dico.application.copyright}</p>
                 </DialogContent>
                 <DialogActions>
-                    <Button type='button' onClick={(data) => this.props.ctx.setState({ apropos: false })}>Fermer</Button>
+                    <Button type='button' onClick={(data) => this.props.ctx.setState({ about: false })}>Fermer</Button>
                 </DialogActions>
             </Dialog>
         )
@@ -265,16 +302,4 @@ class Tableur extends React.Component {
             </Card>
         )
     }
-}
-
-function getObj(objs, id) {
-    var response = null
-    objs.forEach((obj) => {
-        if (obj.id == id) {
-            response = obj
-        }
-    });
-    if (response == null) throw new Error('Element "' + id + '" not found')
-    //console.dir(response)
-    return response;
 }

@@ -124,3 +124,18 @@ module.exports = {
         }
     }
 } // end exports
+
+/**
+ * Fonction pour récupérer l'élément id d'une branche
+ */
+function getObj(objs, id) {
+    var response = null
+    objs.forEach((obj) => {
+        if (obj.id == id) {
+            response = obj
+        }
+    });
+    if (response == null) throw new Error('Element "' + id + '" not found')
+    //console.dir(response)
+    return response;
+}

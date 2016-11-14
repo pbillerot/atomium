@@ -22,15 +22,3 @@ export class Table {
         db.close();
     }
 }
-
-function getObj(objs, id) {
-    var response = null
-    objs.forEach((obj) => {
-        if (obj.id == id) {
-            response = obj
-        }
-    });
-    if (response == null) throw new Error('Element "' + id + '" not found')
-    //console.dir(response)
-    return response;
-}
