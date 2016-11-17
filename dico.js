@@ -12,48 +12,46 @@ module.exports = {
     tables: {
         USERS: {
             basename: '/home/billerot/conf/acteur/tex.sqlite',
+            key: 'IDUSER',
             rubs: {
                 IDUSER: {
-                    is_key: true,
                     label_long: 'COMPTE',
                     label_short: 'COMPTE',
-                    type: 'text', // type HTML5
-                    len: 30,
+                    type: 'text',
+                    length: 9,
+                    required: true,
                     min: null,
                     max: null,
-                    defaut: '',
-                    placeholder: 'compte id',
-                    pattern: null,
+                    default: '',
+                    pattern: "[A-Z,a-z]*",
+                    error: "Obligatoire",
                     tooltip: null,
                     list: null, //val1,val2
                     options: ''
                 },
                 NOMUSER: {
-                    is_key: false,
                     label_long: 'NOM ou PSEUDO',
                     label_short: 'NOM',
-                    type: 'text', // type HTML5
-                    len: 70,
+                    type: 'text',
+                    length: 70,
                     min: null,
                     max: null,
-                    defaut: '',
-                    placeholder: 'nom ou psudo',
+                    default: '',
                     pattern: null,
                     tooltip: 'Nom ou le pseudo du compte',
                     list: null, //val1,val2
                     options: ''
                 },
                 EMAIL: {
-                    is_key: false,
                     label_long: 'EMAIL',
                     label_short: 'EMAIL',
-                    type: 'email', // type HTML5
-                    len: 70,
+                    type: 'email',
+                    length: 70,
                     min: null,
                     max: null,
-                    defaut: '',
-                    placeholder: 'email@info.net',
+                    default: '',
                     pattern: null,
+                    error: null,
                     tooltip: 'Email du compte',
                     list: null, //val1,val2
                     options: ''
@@ -64,59 +62,34 @@ module.exports = {
                 VUE_1: {
                     id: 'VUE_1',
                     title: 'LISTE DES COMPTES',
-                    form_ajout: 'FORM_1',
-                    form_maj: 'FORM_1',
-                    form_view: 'FORM_1',
-                    form_suppr: null,
-                    options: null,
-                    select: null,
-                    securite: null,
-                    help: 'help.md',
-                    cols: {
+                    rubs: {
                         IDUSER: {
-                            tri: null,
-                            is_hidden: false,
-                            is_rupture: false,
-                            is_cumul: false,
-                            is_filtre: true,
-                            filtre: null
                         },
                         NOMUSER: {
-                            tri: 'A',
-                            is_hidden: false,
-                            is_rupture: false,
-                            is_cumul: false,
-                            is_filtre: true,
-                            filtre: null
                         },
                         EMAIL: {
-                            tri: null,
-                            is_hidden: false,
-                            is_rupture: false,
-                            is_cumul: false,
-                            is_filtre: true,
-                            filtre: null
                         }
                     }
                 },
                 VUE_2: {
                     title: 'LISTE DES UTILISATEURS',
-                    form_ajout: 'FORM_1',
-                    form_maj: 'FORM_1',
-                    form_view: 'FORM_1',
-                    form_suppr: null,
-                    options: null,
-                    select: null,
-                    securite: null,
-                    help: 'help.md',
-                    cols: {
+                    rubs: {
                         NOMUSER: {
-                            tri: 'A',
-                            is_hidden: false,
-                            is_rupture: false,
-                            is_cumul: false,
-                            is_filtre: true,
-                            filtre: null
+                        },
+                        IDUSER: {
+                        }
+                    }
+                }
+            },
+            forms: {
+                FORM_1: {
+                    title: 'COMPTE',
+                    rubs: {
+                        IDUSER: {
+                        },
+                        NOMUSER: {
+                        },
+                        EMAIL: {
                         }
                     }
                 }
