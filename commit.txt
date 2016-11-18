@@ -1,0 +1,24 @@
+
+Prochain COMMIT
+x rubrique button
+x form_add form_update
+x pattern de contrôle
+x sidebar avec toutes les vues
+
+- rubrique check
+- rubrique switch
+- rubrique radio
+- rubrique jointure
+
+from react-mdl-extra
+- rubrique autocomplete
+- rubrique menu
+- rubrique select
+- rubrique multiselect
+- rubrique stepper
+
+- rubrique date
+
+- script validation d'un formulaire
+- dialog confirm si abandon modification
+- intégrer les materials icons
