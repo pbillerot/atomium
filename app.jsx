@@ -3,12 +3,10 @@ const ReactDOM = require('react-dom')
 const ReactMarkdown = require('react-markdown-it')
 const sqlite3 = require('sqlite3').verbose();
 
-import {
-    Button, Card, CardActions, CardMenu, CardText, CardTitle, Cell, Chip, ChipContact, Content,
-    Dialog, DialogActions, DialogContent, DialogTitle, Drawer,
-    FABButton, Footer, FooterLinkList, FooterSection, Grid, Header, Icon, IconButton, Layout, List, ListItem,
-    Menu, MenuItem, Navigation, Radio, RadioGroup, Switch, Textfield, Table, TableHeader
-} from 'react-mdl'
+import { AppBar, Button, Card, CardActions, CarTitle, CardMedia, CardText, Checkbox } from 'react-toolbox';
+import { Dialog, FonIcon, IconButton, Input } from 'react-toolbox';
+import { Layout, Link, NavDrawer, Navigation, Panel, Sidebar, Table } from 'react-toolbox';
+import { } from 'react-toolbox';
 
 const Dico = require('./dico')
 const data = require('./data')
@@ -235,46 +233,45 @@ export default class Main extends React.Component {
         switch (this.state.layout) {
             case PageLayout.HOME:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Layout>
                         <HeaderPage ctx={this} />
-                        <Sidebar ctx={this} />
-                        <Content>
+                        <Leftbar ctx={this} />
+                        <Panel>
                             <Portail ctx={this} />
-                        </Content>
-                        <FooterPage ctx={this} />
+                        </Panel>
                         <APropos ctx={this} />
                     </Layout>
                 )
             case PageLayout.VIEW:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Layout>
                         <HeaderPage ctx={this} />
-                        <Sidebar ctx={this} />
-                        <Content>
+                        <Leftbar ctx={this} />
+                        <Panel>
                             <Tableur ctx={this} />
-                        </Content>
+                        </Panel>
                         <APropos ctx={this} />
                     </Layout>
                 )
             case PageLayout.FORM:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Layout>
                         <HeaderPage ctx={this} />
-                        <Sidebar ctx={this} />
-                        <Content>
+                        <Leftbar ctx={this} />
+                        <Panel>
                             <FormContent ctx={this} />
-                        </Content>
+                        </Panel>
                         <APropos ctx={this} />
                     </Layout>
                 )
             case PageLayout.HELP:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Layout>
                         <HeaderPage ctx={this} />
-                        <Sidebar ctx={this} />
-                        <Content>
+                        <Leftbar ctx={this} />
+                        <Panel>
                             <Help ctx={this} />
-                        </Content>
+                        </Panel>
                         <APropos ctx={this} />
                     </Layout>
                 )
@@ -293,60 +290,60 @@ class HeaderPage extends React.Component {
         switch (this.props.ctx.state.layout) {
             case PageLayout.HOME:
                 return (
-                    <Header title={this.props.ctx.state.title}>
-                    </Header>
+                    <Appbar fixed flat title={this.props.ctx.state.title}>
+                    </Appbar>
                 )
             case PageLayout.HELP:
                 return (
-                    <Header title={this.props.ctx.state.title}>
-                    </Header>
+                    <Appbar fixed flat title={this.props.ctx.state.title}>
+                    </Appbar>
                 )
             case PageLayout.VIEW:
                 if (this.props.ctx.state.rows_selected.length == 1) {
                     return (
-                        <Header title={this.props.ctx.state.title}>
-                            <Navigation>
-                                <IconButton name="edit" id="action_edit"
+                        <Appbar fixed flat title={this.props.ctx.state.title}>
+                            <Navigation type='horizontal'>
+                                <Link icon="edit" id="action_edit"
                                     onClick={(event) => {
                                         this.props.ctx.state.form = Dico.tables[table].views[view].form_update
                                         this.props.ctx.handleOpenForm('UPDATE')
                                     }
                                     } />
-                                <IconButton name="delete" id="action_delete"
+                                <Link icon="delete" id="action_delete"
                                     onClick={(event) => {
                                         this.props.ctx.handleUpdateForm('DELETE')
                                     }
                                     } />
                             </Navigation>
-                        </Header>
+                        </Appbar>
                     )
                 } else if (this.props.ctx.state.rows_selected.length > 1) {
                     return (
-                        <Header title={this.props.ctx.state.title}>
-                            <Navigation>
-                                <IconButton name="delete" id="action_delete"
+                        <Appbar fixed flat title={this.props.ctx.state.title}>
+                            <Navigation type='horizontal'>
+                                <Link icon="delete" id="action_delete"
                                     onClick={(event) => this.props.ctx.handleUpdateForm('DELETE')} />
                             </Navigation>
-                        </Header>
+                        </Appbar>
                     )
                 } else {
                     return (
-                        <Header title={this.props.ctx.state.title}>
-                        </Header>
+                        <Appbar fixed flat title={this.props.ctx.state.title}>
+                        </Appbar>
                     )
                 }
 
             case PageLayout.FORM:
                 return (
-                    <Header title={<span><IconButton name="arrow_back"
+                    <Appbar fixed flat title={<span><IconButton name="arrow_back"
                         onClick={(e) => this.props.ctx.handleState({ layout: PageLayout.VIEW, rows_selected: [] })} />
                         <span>{Dico.tables[table].forms[form].title}</span></span>}>
-                        <Navigation>
-                            <IconButton name="check" id="action_valid"
+                        <Navigation type='horizontal'>
+                            <Link icon="check" id="action_valid"
                                 {... { disabled: !this.props.ctx.state.form_valid }}
                                 onClick={(event) => this.props.ctx.handleUpdateForm(this.props.ctx.state.action_form)} />
                         </Navigation>
-                    </Header>
+                    </Appbar>
                 )
 
             default:
@@ -356,48 +353,54 @@ class HeaderPage extends React.Component {
     }
 }
 
-class FooterPage extends React.Component {
-    github(event) {
-        window.open(Dico.application.url
-            , 'github'
-            , 'toolbar=0,status=0,width=1024,height=800');
-    }
-    render() {
-        return (
-            <Footer size="mini">
-                <FooterSection type="bottom">
-                    <FooterLinkList>
-                        <a href="javascript: ;" onClick={this.github}>Github</a>
-                        <a href="javascript: ;" onClick={(data) => new sqlite.Table('USERS').dump()}>Dump</a>
-                    </FooterLinkList>
-                </FooterSection>
-            </Footer>
-        )
-    }
-}
+// class FooterPage extends React.Component {
+//     github(event) {
+//         window.open(Dico.application.url
+//             , 'github'
+//             , 'toolbar=0,status=0,width=1024,height=800');
+//     }
+//     render() {
+//         return (
+//             <Footer size="mini">
+//                 <FooterSection type="bottom">
+//                     <FooterLinkList>
+//                         <a href="javascript: ;" onClick={this.github}>Github</a>
+//                         <a href="javascript: ;" onClick={(data) => new sqlite.Table('USERS').dump()}>Dump</a>
+//                     </FooterLinkList>
+//                 </FooterSection>
+//             </Footer>
+//         )
+//     }
+// }
 
 class Portail extends React.Component {
     render() {
         return (
-            <Card shadow={0} style={{ width: '80%', margin: '20px' }}>
-                <CardTitle style={{ color: '#fff', height: '176px', background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover' }}>
-                    Bienvenue dans ATOMIUM</CardTitle>
-                <CardText>
-                    Le framework pour développer des applications en décrivant
-                    les rubriques, les formulaires, les vues dans un dictionnaire
-                </CardText>
-                <CardActions border>
-                    <Button colored>Pour commencer</Button>
+            <Card style={{ width: '350px' }} >
+                <CardTitle
+                    avatar="https://placeimg.com/80/80/animals"
+                    title="Avatar style title"
+                    subtitle="Subtitle here"
+                    />
+                <CardMedia
+                    aspectRatio="wide"
+                    image="https://placeimg.com/800/450/nature"
+                    />
+                <CardTitle
+                    title="Title goes here"
+                    subtitle="Subtitle here"
+                    />
+                <CardText>bla bla</CardText>
+                <CardActions>
+                    <Button label="Action 1" />
+                    <Button label="Action 2" />
                 </CardActions>
-                <CardMenu style={{ color: '#fff' }}>
-                    <IconButton name="share" />
-                </CardMenu>
             </Card>
         )
     }
 }
 
-class Sidebar extends React.Component {
+class Leftbar extends React.Component {
     closeDrawer() {
         document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     }
@@ -419,20 +422,20 @@ class Sidebar extends React.Component {
     render() {
         var table = 'TEX'
         return (
-            <Drawer title={Dico.application.title}>
-                <Navigation>
-                    <a onClick={(e) => this.handleAccueil(e)}><Icon name="home" /> Accueil</a>
+            <NavDrawer title={Dico.application.title}>
+                <Navigation type='vertical'>
+                    <Link label="Accueil" icon="home" onClick={(e) => this.handleAccueil(e)} />
                 </Navigation>
                 {
                     Object.keys(Dico.tables).map(table =>
-                        <LinkView table={table} key={table} ctx={this.props.ctx}/>
+                        <LinkView table={table} key={table} ctx={this.props.ctx} />
                     )
                 }
-                <Navigation>
-                    <a onClick={(e) => this.handleHelp(e)}><Icon name="help" /> Aide</a>
-                    <a onClick={(e) => this.handleAPropos(e)}><Icon name="info" /> A propos</a>
+                <Navigation type='vertical'>
+                    <Link label="Aide" icon="help" onClick={(e) => this.handleHelp(e)} />
+                    <Link label="A propos" icon="info" onClick={(e) => this.handleAPropos(e)} />
                 </Navigation>
-            </Drawer>
+            </NavDrawer>
         );
     }
 }
@@ -446,17 +449,16 @@ class LinkView extends React.Component {
         this.props.ctx.handleOpenView()
     }
     closeDrawer() {
-        document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
+        //document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     }
     render() {
         return (
-            <Navigation>
+            <Navigation type='vertical'>
                 {
                     Object.keys(Dico.tables[this.props.table].views).map(view =>
-                        <a onClick={(event) => this.handleClickView(this.props.table, view, event)} key={view}>
-                            <Icon name="view_list" />
-                            {Dico.tables[this.props.table].views[view].title}
-                        </a>
+                        <Link label={Dico.tables[this.props.table].views[view].title}
+                            icon="view_list"
+                            onClick={(event) => this.handleClickView(this.props.table, view, event)} key={view} />
                     )
                 }
             </Navigation>
@@ -479,16 +481,18 @@ class Help extends React.Component {
 
 class APropos extends React.Component {
     render() {
+        actions = [
+            { label: "Fermer", onClick: this.props.ctx.setState({ about: false }) }
+        ]
         return (
-            <Dialog open={this.props.ctx.state.about} onCancel={(data) => this.props.ctx.setState({ about: false })}>
-                <DialogTitle>{Dico.application.title}</DialogTitle>
-                <DialogContent>
+            <Dialog title={Dico.application.title}
+                actions={this.actions}
+                active={this.props.ctx.state.about}
+                onEscKeyDown={(data) => this.props.ctx.setState({ about: false })}>
+                <div>
                     <p>{Dico.application.desc}</p>
                     <p>{Dico.application.copyright}</p>
-                </DialogContent>
-                <DialogActions>
-                    <Button type='button' onClick={(data) => this.props.ctx.setState({ about: false })}>Fermer</Button>
-                </DialogActions>
+                </div>
             </Dialog>
         )
     }
@@ -510,37 +514,29 @@ class Tableur extends React.Component {
         let form_add = Dico.tables[table].views[view].form_add
         return (
             <Card style={{ width: '100%', margin: 'auto' }}>
-                {/*
-                <CardTitle>{Dico.tables[this.props.ctx.state.table].
-                    views[this.props.ctx.state.view].label}</CardTitle>
-                */}
                 <CardText>
                     <Table
-                        shadow={0}
-                        sortable
                         selectable
-                        rowKeyColumn={this.props.ctx.state.key_id}
-                        rows={this.props.ctx.state.rows}
-                        onSelectionChanged={(data) => this.selectionChanged(data)}
-                        >
-                        {
+                        multiselectable
+                        //rowKeyColumn={this.props.ctx.state.key_id}
+                        model={this.props.ctx.state.rows}
+                        selected={(data) => this.selectionChanged(data)}
+                        />
+                    {/*
                             Object.keys(cols).map(key =>
                                 <TableHeader key={key}
                                     name={key}
                                     cellFormatter={(value) => <CellFormatter ctx={this.props.ctx} rub={rubs[key]} value={value} />}
-                                    {... {tooltip: rubs[key].tooltip}}
+                                    {... { tooltip: rubs[key].tooltip }}
                                     >
                                     {rubs[key].label_short}
                                 </TableHeader>
                             )
-                        }
-                    </Table>
+                        */}
                 </CardText>
-                <CardMenu style={{ color: '#fff' }}>
-                    <FABButton colored ripple onClick={(e) => this.add(form_add)}>
-                        <Icon name="add" />
-                    </FABButton>
-                </CardMenu>
+                <CardActions>
+                    <Button icon='add' floating accent onClick={(e) => this.add(form_add)} />
+                </CardActions>
             </Card>
         )
     }
@@ -550,7 +546,7 @@ class CellFormatter extends React.Component {
     render() {
         switch (this.props.rub.type) {
             case 'button':
-                return <IconButton name="edit"
+                return <FontIcon value="edit"
                     onClick={(e) => {
                         this.props.ctx.state.form = this.props.rub.form
                         this.props.ctx.state.key_value = this.props.value
@@ -592,15 +588,11 @@ class FormContent extends React.Component {
         let fields = Dico.tables[table].forms[form].rubs
         //console.log('fields: ' + JSON.stringify(fields, null, 4))
         return (
-            <Card shadow={1} style={{ width: '90%', margin: '20px', padding: '10px' }}>
+            <Card style={{ width: '90%', margin: '20px', padding: '10px' }}>
                 <form>
                     {
                         Object.keys(fields).map(key =>
-                            <Grid key={key}>
-                                <Cell col={12}>
-                                    <Field ctx={this.props.ctx} key_id={key} />
-                                </Cell>
-                            </Grid>
+                            <Field key={key} ctx={this.props.ctx} key_value={key} />
                         )
                     }
                 </form>
@@ -634,34 +626,26 @@ export class Field extends React.Component {
         let form = this.props.ctx.state.form
         let rubs = Dico.tables[table].rubs
         let fields = Dico.tables[table].forms[form].rubs
-        let key = this.props.key_id
+        let key = this.props.key_value
 
         switch (rubs[key].type) {
             case 'text':
                 return (
-                    <Textfield floatingLabel {... { label: rubs[key].label_long }}
+                    <Input type="text" name={key} {... { label: rubs[key].label_long }}
                         ref={(ref) => fields[key].ref = this}
-                        {... { pattern: rubs[key].pattern }}
-                        {... { error: rubs[key].error }}
-                        {... { required: rubs[key].required }}
-                        {... { maxLength: rubs[key].length }}
                         value={fields[key].value}
                         onChange={(event) => this.handleOnChange(key, event.target.value)} />
                 )
             case 'email':
                 return (
-                    <Textfield floatingLabel {... { label: rubs[key].label_long }}
+                    <Input type="email" name={key} {... { label: rubs[key].label_long }}
                         ref={(ref) => fields[key].ref = this}
-                        {... { pattern: "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", }}
-                        {... { error: "l'email sera de la forme: name@info.net" }}
-                        {... { required: rubs[key].required }}
-                        {... { maxLength: rubs[key].length }}
                         value={fields[key].value}
                         onChange={(event) => this.handleOnChange(key, event.target.value)} />
                 )
             case 'button':
                 return (
-                    <IconButton name="edit" />
+                    <FontIcon value="edit" />
                 )
             default:
                 return <div>{key}.type {rubs[key].type}not found</div>
