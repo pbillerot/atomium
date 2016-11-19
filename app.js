@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Main from './app.jsx'
+import Main from './qualif.jsx'
+//import Main from './atomium.jsx'
 
 
 window.onload = function () {
