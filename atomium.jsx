@@ -2,13 +2,9 @@ const React = require('react')
 const ReactDOM = require('react-dom')
 const ReactMarkdown = require('react-markdown-it')
 const sqlite3 = require('sqlite3').verbose();
+const {Table, Column, Cell} = require('fixed-data-table')
+const {Button, Card, Footer, Header, Toolbar, Window} = require('./components.jsx')
 
-import {
-    Button, Card, CardActions, CardMenu, CardText, CardTitle, Cell, Chip, ChipContact, Content,
-    Dialog, DialogActions, DialogContent, DialogTitle, Drawer,
-    FABButton, Footer, FooterLinkList, FooterSection, Grid, Header, Icon, IconButton, Layout, List, ListItem,
-    Menu, MenuItem, Navigation, Radio, RadioGroup, Switch, Textfield, Table, TableHeader
-} from 'react-mdl'
 
 const Dico = require('./dico')
 const data = require('./data')
@@ -25,7 +21,7 @@ var PageLayout = {
     FORM: 'FORM',
     HELP: 'HELP'
 };
-export default class Main extends React.Component {
+export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -235,7 +231,7 @@ export default class Main extends React.Component {
         switch (this.state.layout) {
             case PageLayout.HOME:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Window>
                         <HeaderPage ctx={this} />
                         <Sidebar ctx={this} />
                         <Content>
@@ -243,40 +239,40 @@ export default class Main extends React.Component {
                         </Content>
                         <FooterPage ctx={this} />
                         <APropos ctx={this} />
-                    </Layout>
+                    </Window>
                 )
             case PageLayout.VIEW:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Window>
                         <HeaderPage ctx={this} />
                         <Sidebar ctx={this} />
                         <Content>
                             <Tableur ctx={this} />
                         </Content>
                         <APropos ctx={this} />
-                    </Layout>
+                    </Window>
                 )
             case PageLayout.FORM:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Window>
                         <HeaderPage ctx={this} />
                         <Sidebar ctx={this} />
                         <Content>
                             <FormContent ctx={this} />
                         </Content>
                         <APropos ctx={this} />
-                    </Layout>
+                    </Window>
                 )
             case PageLayout.HELP:
                 return (
-                    <Layout fixedHeader fixedDrawer>
+                    <Window>
                         <HeaderPage ctx={this} />
                         <Sidebar ctx={this} />
                         <Content>
                             <Help ctx={this} />
                         </Content>
                         <APropos ctx={this} />
-                    </Layout>
+                    </Window>
                 )
             default:
                 return null
@@ -305,28 +301,28 @@ class HeaderPage extends React.Component {
                 if (this.props.ctx.state.rows_selected.length == 1) {
                     return (
                         <Header title={this.props.ctx.state.title}>
-                            <Navigation>
-                                <IconButton name="edit" id="action_edit"
+                            <Toolbar>
+                                <Button color="default" icon="plus-circled"
                                     onClick={(event) => {
                                         this.props.ctx.state.form = Dico.tables[table].views[view].form_update
                                         this.props.ctx.handleOpenForm('UPDATE')
                                     }
                                     } />
-                                <IconButton name="delete" id="action_delete"
+                                <Button color="default" icon="trash"
                                     onClick={(event) => {
                                         this.props.ctx.handleUpdateForm('DELETE')
                                     }
                                     } />
-                            </Navigation>
+                            </Toolbar>
                         </Header>
                     )
                 } else if (this.props.ctx.state.rows_selected.length > 1) {
                     return (
                         <Header title={this.props.ctx.state.title}>
-                            <Navigation>
-                                <IconButton name="delete" id="action_delete"
+                            <Toolbar>
+                                <Button color="default" icon="trash"
                                     onClick={(event) => this.props.ctx.handleUpdateForm('DELETE')} />
-                            </Navigation>
+                            </Toolbar>
                         </Header>
                     )
                 } else {
@@ -337,15 +333,20 @@ class HeaderPage extends React.Component {
                 }
 
             case PageLayout.FORM:
-                return (
+                {/* 
                     <Header title={<span><IconButton name="arrow_back"
                         onClick={(e) => this.props.ctx.handleState({ layout: PageLayout.VIEW, rows_selected: [] })} />
                         <span>{Dico.tables[table].forms[form].title}</span></span>}>
-                        <Navigation>
+                        <Toolbar>
                             <IconButton name="check" id="action_valid"
                                 {... { disabled: !this.props.ctx.state.form_valid }}
                                 onClick={(event) => this.props.ctx.handleUpdateForm(this.props.ctx.state.action_form)} />
-                        </Navigation>
+                        </Toolbar>
+                    </Header>
+                */}
+
+                return (
+                    <Header title={this.props.ctx.state.title}>
                     </Header>
                 )
 
@@ -364,13 +365,9 @@ class FooterPage extends React.Component {
     }
     render() {
         return (
-            <Footer size="mini">
-                <FooterSection type="bottom">
-                    <FooterLinkList>
-                        <a href="javascript: ;" onClick={this.github}>Github</a>
-                        <a href="javascript: ;" onClick={(data) => new sqlite.Table('USERS').dump()}>Dump</a>
-                    </FooterLinkList>
-                </FooterSection>
+            <Footer>
+                <a href="javascript: ;" onClick={this.github}>Github</a>
+                <a href="javascript: ;" onClick={(data) => new sqlite.Table('USERS').dump()}>Dump</a>
             </Footer>
         )
     }
@@ -379,25 +376,17 @@ class FooterPage extends React.Component {
 class Portail extends React.Component {
     render() {
         return (
-            <Card shadow={0} style={{ width: '80%', margin: '20px' }}>
-                <CardTitle style={{ color: '#fff', height: '176px', background: 'url(http://www.getmdl.io/assets/demos/welcome_card.jpg) center / cover' }}>
-                    Bienvenue dans ATOMIUM</CardTitle>
-                <CardText>
+            <Card>
+                <div>
                     Le framework pour développer des applications en décrivant
                     les rubriques, les formulaires, les vues dans un dictionnaire
-                </CardText>
-                <CardActions border>
-                    <Button colored>Pour commencer</Button>
-                </CardActions>
-                <CardMenu style={{ color: '#fff' }}>
-                    <IconButton name="share" />
-                </CardMenu>
+                </div>
             </Card>
         )
     }
 }
 
-class Sidebar extends React.Component {
+class SidebarPage extends React.Component {
     closeDrawer() {
         document.querySelector('.mdl-layout').MaterialLayout.toggleDrawer();
     }
@@ -419,20 +408,20 @@ class Sidebar extends React.Component {
     render() {
         var table = 'TEX'
         return (
-            <Drawer title={Dico.application.title}>
-                <Navigation>
+            <Sidebar>
+                <NavGroup>
                     <a onClick={(e) => this.handleAccueil(e)}><Icon name="home" /> Accueil</a>
-                </Navigation>
+                </NavGroup>
                 {
                     Object.keys(Dico.tables).map(table =>
-                        <LinkView table={table} key={table} ctx={this.props.ctx}/>
+                        <LinkView table={table} key={table} ctx={this.props.ctx} />
                     )
                 }
-                <Navigation>
+                <NavGroup>
                     <a onClick={(e) => this.handleHelp(e)}><Icon name="help" /> Aide</a>
                     <a onClick={(e) => this.handleAPropos(e)}><Icon name="info" /> A propos</a>
-                </Navigation>
-            </Drawer>
+                </NavGroup>
+            </Sidebar>
         );
     }
 }
@@ -450,7 +439,7 @@ class LinkView extends React.Component {
     }
     render() {
         return (
-            <Navigation>
+            <NavGroup>
                 {
                     Object.keys(Dico.tables[this.props.table].views).map(view =>
                         <a onClick={(event) => this.handleClickView(this.props.table, view, event)} key={view}>
@@ -459,7 +448,7 @@ class LinkView extends React.Component {
                         </a>
                     )
                 }
-            </Navigation>
+            </NavGroup>
         )
     }
 }
@@ -528,7 +517,7 @@ class Tableur extends React.Component {
                                 <TableHeader key={key}
                                     name={key}
                                     cellFormatter={(value) => <CellFormatter ctx={this.props.ctx} rub={rubs[key]} value={value} />}
-                                    {... {tooltip: rubs[key].tooltip}}
+                                    {... { tooltip: rubs[key].tooltip }}
                                     >
                                     {rubs[key].label_short}
                                 </TableHeader>
