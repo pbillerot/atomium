@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './maquetteReact.jsx'
+import App from './maquette.jsx'
 //import Main from './atomium.jsx'
 
 
